@@ -1,7 +1,7 @@
 var casper = require('casper').create({
       verbose: true,
       logLevel: 'error',
-      waitTimeout: 10000,
+      waitTimeout: 3000,
       pageSettings: {
         loadImages: false,
         loadPlugins: false,
@@ -47,7 +47,7 @@ casper.start('https://gst.customs.gov.my/TAP/_/#1', function() {
         typeof casper.cli.get(1) === 'number' ? padDigits(casper.cli.get(1), 12) : casper.cli.get(1))
         .sendKeys(input_text_selector, this.page.event.key.Enter , {keepFocus: true});
       // get results
-      this.waitForSelector('table#d-f', function() {
+      this.waitUntilVisible('table#d-f', function() {
 
         results = this.evaluate(function() {
 
@@ -64,7 +64,18 @@ casper.start('https://gst.customs.gov.my/TAP/_/#1', function() {
           });
         });
         //require('utils').dump(results);
-        this.echo(JSON.stringify(results));
+        this.echo(JSON.stringify({results: results}));
+
+      // on failed results
+      }, function() {
+        
+        this.waitUntilVisible('#container_d-l', function() {
+          this.echo(JSON.stringify({
+            error: this.evaluate(function() {
+              return document.querySelector('#container_d-l').innerText.trim()
+            })
+          }));
+        });
 
       }); // end waitForSelector('table#d-f')
 

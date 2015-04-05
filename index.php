@@ -20,7 +20,7 @@ $app->get('/api/v1/:query_type/:query_value', function ($query_type, $query_valu
 	$response = $app->response();
 	$response['Content-Type'] = 'application/json';
 	$response->status(200);
-	$response->body(json_encode(array('results' => json_decode($process->getOutput())), JSON_PRETTY_PRINT));
+	$response->body(json_encode(json_decode($process->getOutput()), JSON_PRETTY_PRINT));
 });
 
 $app->run();
