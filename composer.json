@@ -2,5 +2,11 @@
     "require": {
         "slim/slim": "~2.6",
         "symfony/process": "~2.6"
-    }
+    },
+   "extra": {
+	   "heroku": {
+	   		"framework": "slim",
+        	"index-document": "index.php"
+      	}
+  	}
 }
