@@ -75,6 +75,18 @@ casper.start('https://gst.customs.gov.my/TAP/_/#1', function() {
               return document.querySelector('#container_d-l').innerText.trim()
             })
           }));
+
+        // other error
+        }, function() {
+
+          this.waitUntilVisible('#container_d-i', function() {
+            this.echo(JSON.stringify({
+              error: this.evaluate(function() {
+                return document.querySelector('#container_d-i').innerText.trim()
+              })
+            }));
+          });
+
         });
 
       }); // end waitForSelector('table#d-f')
