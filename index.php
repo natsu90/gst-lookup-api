@@ -10,11 +10,11 @@ $app->get('/', function () use($app) {
 
 $app->get('/api/v1/:query_type/:query_value', function ($query_type, $query_value) use($app) {
 
-    $process = new Process(sprintf('casperjs gst.proc %s %s', $query_type, $query_value));
+	$process = new Process(sprintf('casperjs gst.proc %s %s', $query_type, $query_value));
 	$process->run();
 
 	if (!$process->isSuccessful()) {
-    	throw new \RuntimeException($process->getErrorOutput());
+		throw new \RuntimeException($process->getErrorOutput());
 	}
 
 	$response = $app->response();
