@@ -1,8 +1,13 @@
 <?php
 require 'vendor/autoload.php';
 use Symfony\Component\Process\Process;
+use Desarrolla2\Cache\Cache;
+use Desarrolla2\Cache\Adapter\Redis;
+
+$adapter = new Redis();
 
 $app = new \Slim\Slim();
+$app->add(new Slim\Middleware\Cache(new Cache($adapter)));
 
 $app->get('/', function () use($app) {
     $app->render('doc.php');
