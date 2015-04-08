@@ -29,6 +29,7 @@ Class Cache extends \Slim\Middleware
             return urlencode($val); 
         },$queryParams));
 
+        $key = urlencode($key); // fix for file cache adapter
 		// $key2 = md5($uri.json_encode($query));
         $data = $this->fetch($key);
         if ($data) {

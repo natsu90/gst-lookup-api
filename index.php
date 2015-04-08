@@ -2,9 +2,9 @@
 require 'vendor/autoload.php';
 use Symfony\Component\Process\Process;
 use Desarrolla2\Cache\Cache;
-use Desarrolla2\Cache\Adapter\Redis;
+use Desarrolla2\Cache\Adapter\File;
 
-$adapter = new Redis();
+$adapter = new File("tmp");
 
 $app = new \Slim\Slim();
 $app->add(new Slim\Middleware\Cache(new Cache($adapter)));
