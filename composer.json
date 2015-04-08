@@ -1,6 +1,7 @@
 {
     "require": {
         "slim/slim": "~2.6",
-        "symfony/process": "~2.6"
+        "symfony/process": "~2.6",
+        "desarrolla2/cache":  "dev-master"
     }
 }
