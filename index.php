@@ -8,49 +8,49 @@ class Cache extends \Slim\Middleware
 {
 	protected $cache;
  
-    public function __construct(CacheAdapter $cache)
-    {
-        $this->cache = $cache;
-    }
+	public function __construct(CacheAdapter $cache)
+	{
+		$this->cache = $cache;
+	}
  
-    public function call()
-    {
+	public function call()
+	{
 		$uri = $this->app->request()->getResourceUri();
 		$rsp = $this->app->response();
-        $key = urlencode($uri);
+		$key = urlencode($uri);
 		
-        $data = $this->fetch($key);
-        if ($data) {
+		$data = $this->fetch($key);
+		if ($data) {
             
-            $rsp["Content-Type"] = $data['content_type'];
-            $rsp->body($data['body']);
-            return;
-        }
+			$rsp["Content-Type"] = $data['content_type'];
+			$rsp->body($data['body']);
+			return;
+		}
  
-        $this->next->call();
+		$this->next->call();
  
-        if ($rsp->status() == 200) {
+		if ($rsp->status() == 200) {
             
-            $ttl = 3600;
-            if(preg_match("/gst_no/", $uri) && preg_match("/results/", $rsp->body()))
+			$ttl = 3600;
+			if(preg_match("/gst_no/", $uri) && preg_match("/results/", $rsp->body()))
 				$ttl = null;
 
-            $this->save($key, $rsp["Content-Type"], $rsp->body(), $ttl);
-        }
-    }
+			$this->save($key, $rsp["Content-Type"], $rsp->body(), $ttl);
+		}
+	}
  
-    protected function fetch($key)
-    {
-        $cache = $this->cache->get($key);
-        return unserialize($cache);
-    }
+	protected function fetch($key)
+	{
+		$cache = $this->cache->get($key);
+		return unserialize($cache);
+	}
  
-    protected function save($key, $contentType, $body, $ttl)
-    {
-    	$cache = array('content_type' => $contentType, 'body' => $body);
-        $cache = serialize($cache);
-        $this->cache->set($key, $cache, $ttl);
-    }
+	protected function save($key, $contentType, $body, $ttl)
+	{
+		$cache = array('content_type' => $contentType, 'body' => $body);
+		$cache = serialize($cache);
+		$this->cache->set($key, $cache, $ttl);
+	}
 }
 
 $adapter = new File("cache");
