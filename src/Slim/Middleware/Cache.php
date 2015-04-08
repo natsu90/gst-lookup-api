@@ -44,7 +44,13 @@ Class Cache extends \Slim\Middleware
  
         if ($rsp->status() == 200) {
             // cache result for future look up
-            $this->save($key, $rsp["Content-Type"], $rsp->body());
+            $ttl = 3600;
+            if(preg_match("/gst_no/", $uri)){
+                if(preg_match("/results/", $rsp->body())){
+                    $ttl = null;    
+                }
+            } 
+            $this->save($key, $rsp["Content-Type"], $rsp->body(),$ttl);
         }
     }
  
@@ -54,10 +60,10 @@ Class Cache extends \Slim\Middleware
         return unserialize($cache);
     }
  
-    protected function save($key, $contentType, $body)
+    protected function save($key, $contentType, $body,$ttl)
     {
     	$cache = array('content_type' => $contentType, 'body' => $body);
         $cache = serialize($cache);
-        $this->cache->set($key,$cache,3600);
+        $this->cache->set($key,$cache,$ttl);
     }
 }
