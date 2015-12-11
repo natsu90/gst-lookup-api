@@ -112,7 +112,7 @@ casper.start('https://gst.customs.gov.my/TAP/_/#1')
             this.echo(JSON.stringify({
               error: this.evaluate(function(error_3) {
                 return document.querySelector(error_3).innerText.trim()
-              }, error_2)
+              }, error_3)
             }));
           });
         });
