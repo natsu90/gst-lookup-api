@@ -1,20 +1,20 @@
 var input_radio_selector, input_text_selector, results = [],
     // update here if it's stop working
-    gst_lookup_label = '#cl_b-i',
-    gst_no_radio = '#e-3',
-    gst_no_input = '#e-5',
-    reg_no_radio = '#e-6',
-    reg_no_input = '#e-7',
-    reg_name_radio = '#e-8',
-    reg_name_input = '#e-9',
-    table_result = '#e-g', // cannot export var in line 65
-    error_1 = '#e-k', // cannot export var in line 90
-    error_2 = '#e-n', // line 100
-    error_3 = '#e-p', // line 110
+    gst_lookup_label = '#cl_b-l',
+    gst_no_radio = '#e-4',
+    gst_no_input = '#e-6',
+    reg_no_radio = '#e-7',
+    reg_no_input = '#e-8',
+    reg_name_radio = '#e-9',
+    reg_name_input = '#e-a',
+    table_result = '#e-h',
+    error_1 = '#e-m',
+    error_2 = '#e-r',
+    error_3 = '#e-u',
     casper = require('casper').create({
       verbose: true,
       logLevel: 'error',
-      waitTimeout: 3000,
+      waitTimeout: 1000,
       pageSettings: {
         loadImages: false,
         loadPlugins: false,
@@ -48,80 +48,76 @@ function padDigits(number, digits) {
     return Array(Math.max(digits - String(number).length + 1, 0)).join(0) + number;
 }
 
-casper.start('https://gst.customs.gov.my/TAP/_/#1', function() {
+casper.start('https://gst.customs.gov.my/TAP/_/#1') 
+  
+  // click Lookup GST Status label
+  .waitForSelector(gst_lookup_label, function() {
+    this.click(gst_lookup_label)
+  })
+    
+  // choose radio category and keyin input
+  .waitForSelector(input_radio_selector, function() {
+    this.click(input_radio_selector)
+    this.sendKeys(input_text_selector, 
+      // casper cli convert the gst_no to int removing zero prefix, so we append back the zeros assuming gst_no has 12 digits
+      typeof casper.cli.get(1) === 'number' ? padDigits(casper.cli.get(1), 12) : casper.cli.get(1))
+      .sendKeys(input_text_selector, this.page.event.key.Enter , {keepFocus: true});
+  })
+      
+  // get results
+  .waitUntilVisible(table_result, function() {
 
-  this.waitForSelector(gst_lookup_label, function() {
-    // click Lookup GST Status label
-    this.click(gst_lookup_label);
-    this.waitForSelector(input_radio_selector, function() {
-      // choose radio category and keyin input
-      this.click(input_radio_selector);
-      this.sendKeys(input_text_selector, 
-        // casper cli convert the gst_no to int removing zero prefix, so we append back the zeros assuming gst_no has 12 digits
-        typeof casper.cli.get(1) === 'number' ? padDigits(casper.cli.get(1), 12) : casper.cli.get(1))
-        .sendKeys(input_text_selector, this.page.event.key.Enter , {keepFocus: true});
-      // get results
-      this.waitUntilVisible(table_result, function() {
+    results = this.evaluate(function(table_result) {
+      
+      var rows = document.querySelectorAll(table_result+' tbody tr.DataRow');
+      return Array.prototype.map.call(rows, function(row) {
 
-        results = this.evaluate(function(table_result) {
-
-          var rows = document.querySelectorAll('#e-g tbody tr.DataRow');
-          return Array.prototype.map.call(rows, function(row) {
-
-            var cells = row.querySelectorAll('td');
-            return {
-              gst_no: cells[0].innerText.trim(),
-              taxpayer_name: cells[1].innerText.trim(),
-              trading_name: cells[2].innerText.trim(),
-              commence_date: cells[3].innerText.trim(),
-              status: cells[4].innerText.trim()
-            };
-          });
+        var cells = row.querySelectorAll('td');
+          return {
+            gst_no: cells[0].innerText.trim(),
+            taxpayer_name: cells[1].innerText.trim(),
+            trading_name: cells[2].innerText.trim(),
+            commence_date: cells[3].innerText.trim(),
+            status: cells[4].innerText.trim()
+          };
         });
-        //require('utils').dump(results);
-        this.echo(JSON.stringify({results: results}));
+      }, table_result);
+      //require('utils').dump(results);
+      this.echo(JSON.stringify({results: results}));
 
-      // on failed results
-      }, function() {
+    // on failed results
+    }, function() {
         
-        this.waitUntilVisible(error_1, function() {
+      this.waitUntilVisible(error_1, function() {
+        this.echo(JSON.stringify({
+          error: this.evaluate(function(error_1) {
+            return document.querySelector(error_1).innerText.trim()
+          }, error_1)
+        }));
+
+      // other error
+      }, function() {
+
+        this.waitUntilVisible(error_2, function() {
           this.echo(JSON.stringify({
-            error: this.evaluate(function() {
-              return document.querySelector('#e-k').innerText.trim()
-            })
+            error: this.evaluate(function(error_2) {
+              return document.querySelector(error_2).innerText.trim()
+            }, error_2)
           }));
 
-        // other error
+        // another error
         }, function() {
 
-          this.waitUntilVisible(error_2, function() {
+          this.waitUntilVisible(error_3, function() {
             this.echo(JSON.stringify({
-              error: this.evaluate(function() {
-                return document.querySelector('#e-n').innerText.trim()
-              })
+              error: this.evaluate(function(error_3) {
+                return document.querySelector(error_3).innerText.trim()
+              }, error_2)
             }));
-
-          // another error
-          }, function() {
-
-            this.waitUntilVisible(error_3, function() {
-              this.echo(JSON.stringify({
-                error: this.evaluate(function() {
-                  return document.querySelector('#e-p').innerText.trim()
-                })
-              }));
-            })
           });
-
         });
-
-      }); // end waitForSelector('table#d-f')
-
-    }); // end waitForSelector(input_radio_selector)
-
-  }); // end waitForSelector('#cl_b-i')
-
-}); // end casper.create
+      });
+  });
 
 /* debug */
 
