@@ -1,6 +1,6 @@
 var input_radio_selector, input_text_selector, results = [],
     // update here if it's stop working
-    gst_lookup_label = '#cl_b-l',
+    gst_lookup_label = '#cl_b-m',
     gst_no_radio = '#e-4',
     gst_no_input = '#e-6',
     reg_no_radio = '#e-7',
