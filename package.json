@@ -1,0 +1,11 @@
+{
+  "scripts": {
+    "postinstall": "export PHANTOMJS_EXECUTABLE=./node_modules/phantomjs/bin/phantomjs"
+  },
+  "dependencies": {
+    "casperjs": "1.1.1",
+    "phantomjs": "~1.9",
+    "spooky": "~0.2.5",
+    "tiny-jsonrpc": "^2.0.1"
+  }
+}

@@ -1,0 +1,13 @@
+{
+	"lookup_label_id": "#cl_c-n",
+	"gst_no_radio_input_id": "#g-4",
+	"gst_no_text_input_id": "#g-6",
+	"reg_no_radio_input_id": "#g-7",
+	"reg_no_text_input_id": "#g-8",
+	"reg_name_radio_input_id": "#g-9",
+	"reg_name_text_input_id": "#g-a",
+	"result_table_id": "#g-h",
+	"error_msg_1_id": "#g-m",
+	"error_msg_2_id": "#g-r",
+	"error_msg_3_id": "#g-u"
+}
